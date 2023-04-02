@@ -1,9 +1,10 @@
  from collections import UserDict
-
+from datetime import date, timedelta
 
 class AddressBook(UserDict):
-    def __init__(self, records_per_page=5):
+    def __init__(self, data, records_per_page=5):
         super().__init__()
+        self.data = data
         self.records_per_page = records_per_page
 
     def add_record(self, record):
@@ -12,16 +13,11 @@ class AddressBook(UserDict):
     def __iter__(self):
         sorted_data = sorted(self.data.values(), key=lambda r: r.name.get_value())
         pages = [sorted_data[i:i+self.records_per_page] for i in range(0, len(sorted_data), self.records_per_page)]
-        page_num = 0
-        while page_num < len(pages):
-            page = pages[page_num]
+        for page in pages:
             for record in page:
-                yield f"{record.name}: {', '.join(record.phones)} ({record.birthday})" 
-            page_num += 1
-            if page_num < len(pages):
-                input(f"Press Enter to show next {self.records_per_page} records")
-        return
-    
+                yield f"{record.name}: {', '.join(record.phones)} ({record.birthday})"
+            input(f"Press Enter to show next {self.records_per_page} records")
+
     def search(self, search_string):
     results = []
     for record in self.data.values():
@@ -34,7 +30,6 @@ class AddressBook(UserDict):
             del self.data[name]
         else:
             raise ValueError(f"No record found with name {name}")
-
 
 
 class Record():
